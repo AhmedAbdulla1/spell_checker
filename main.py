@@ -1,5 +1,6 @@
 import difflib
 from simple_colors import *
+from time import time
 
 dictionary = open("dictionary.txt", "r")  # open the dictionary file
 dic_to_list = dictionary.read().split()  # set the dictionary in list
@@ -29,6 +30,7 @@ def binary_search(item, _list=dic_to_list):
     # first, last = 0, len(_list) - 1
     # while first <= last:
     #     mid = (first + last) // 2
+
     #     if _list[mid] == item:
     #         return True
     #     elif item > _list[mid]:
@@ -37,72 +39,63 @@ def binary_search(item, _list=dic_to_list):
     #         last = mid - 1
     # return False
 
-def closest(word):  # search for the closest word
-    index = [0, 0, 0, 0, 0]
-    max = [0, 0, 0, 0, 0]
 
-    for i in range(0, len(DIC)):
-        similar = difflib.SequenceMatcher(None, DIC[i], word).ratio()
-        if similar > max[0]:
-            max[0] = similar
-            index[0] = i
-            sort(max, index)
+def sort(_max, index):
+    for i in range(0, 4):
+        if _max[i] > _max[i + 1]:
+            _max[i], _max[i + 1] = _max[i + 1], _max[i]
+            index[i], index[i + 1] = index[i + 1], index[i]
+
+
+def get_suggestion(_word):  # search for the get_suggestion word
+    index = [dic_to_list[0], dic_to_list[1], dic_to_list[2], dic_to_list[3], dic_to_list[4]]
+    _max = [0, 0, 0, 0, 0]
+
+    for item in dic_to_list:
+        similar = difflib.SequenceMatcher(None, item, word).ratio()
+        if similar >= 0.75 and similar > _max[0]:
+            _max[0] = similar
+            index[0] = item
+            sort(_max, index)
 
     return index
-def get_suggestions(_word):
-    """
-    search for the closest word
-    :param _word:
-    :return:
-    """
-
-    index = 0
-    _max = 0
-
-    for i in range(0, len(dic_to_list)):
-        temp = difflib.SequenceMatcher(None, dic_to_list[i], _word)
-        similar = temp.ratio()
-        if similar > _max:
-            _max = similar
-            index = i
-    return dic_to_list[index]
 
 
 class Format:
     end = '\033[0m'
     underline = '\033[4m'
 
+    @staticmethod
+    def print_wrong_word(_words, _wrongWords):
+        """
+        to print the wrong words and draw underline
+        :param _words:
+        :param _wrongWords:
+        :return: None
+        """
+        for _word in _words:
+            if _word in _wrongWords:
+                print(red(Format.underline + _word + Format.end), end=' ')
+            else:
+                print(_word, end=' ')
+        print()
 
-def formater(_words, _wrongWords):
-    """
-    to print the wrong words and draw underline
-    :param _words:
-    :param _wrongWords:
-    :return: None
-    """
-    for _word in _words:
-        if _word in _wrongWords:
-            print(red(Format.underline + _word + Format.end), end=' ')
-        else:
-            print(_word, end=' ')
-    print()
-
-
-def print_suggestion(_wrongWords, _suggestionWords):
-    """
-    this function to print the suggestion words
-    :param _wrongWords: this is the list of wrong words
-    :param _suggestionWords: this is the dic of <wrongWords,list of suggestionWords>
-    :return: None
-    """
-    for _word in _wrongWords:
-        print(blue(_word) + ' : ' + ' ,'.join(_suggestionWords[_word]))
+    @staticmethod
+    def print_suggestion(_wrongWords, _suggestionWords):
+        """
+        this function to print the suggestion words
+        :param _wrongWords: this is the list of wrong words
+        :param _suggestionWords: this is the dic of <wrongWords,list of suggestionWords>
+        :return: None
+        """
+        for _word in _wrongWords:
+            print(blue(_word) + ' : ' + ', '.join(_suggestionWords[_word]))
 
 
 # start my program
 content = input('enter your content:')
+startTime = time()
 wordlist = content.split()
-
 wrongWords = []
 for word in wordlist:
     if not binary_search(word):
@@ -110,6 +103,9 @@ for word in wordlist:
 
 suggestionWords = {}
 for word in wrongWords:
-    suggestionWords[word] = closest(word)
-formater(wordlist, wrongWords)
-print_suggestion(wrongWords, suggestionWords)
+    suggestionWords[word] = get_suggestion(word)
+p = Format()
+p.print_wrong_word(wordlist, wrongWords)
+p.print_suggestion(wrongWords, suggestionWords)
+
+print('time is : ' + str(time() - startTime))
