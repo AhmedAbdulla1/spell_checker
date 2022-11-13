@@ -46,7 +46,7 @@ def sort(_max, index):
     :param index: list of words
     :return: none
     """
-    for i in range(0, 2):
+    for i in range(0, 4):
         if _max[i] > _max[i + 1]:
             _max[i], _max[i + 1] = _max[i + 1], _max[i]
             index[i], index[i + 1] = index[i + 1], index[i]
@@ -58,12 +58,12 @@ def get_suggestion(_word):
     :param _word:
     :return: list of suggestion words
     """
-    index = [dic_to_list[0], dic_to_list[1], dic_to_list[2]]
-    _max = [0, 0, 0]
+    index = [dic_to_list[0], dic_to_list[1], dic_to_list[2], dic_to_list[3], dic_to_list[4]]
+    _max = [0, 0, 0,0,0]
 
     for item in dic_to_list:
         similar = difflib.SequenceMatcher(None, item, word).ratio()
-        if similar >= 0.75 and similar > _max[0]:
+        if similar >= 0.70 and similar > _max[0]:
             _max[0] = similar
             index[0] = item
             sort(_max, index)
