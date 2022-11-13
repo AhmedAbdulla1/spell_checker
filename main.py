@@ -37,7 +37,18 @@ def binary_search(item, _list=dic_to_list):
     #         last = mid - 1
     # return False
 
+def closest(word):  # search for the closest word
+    index = [0, 0, 0, 0, 0]
+    max = [0, 0, 0, 0, 0]
 
+    for i in range(0, len(DIC)):
+        similar = difflib.SequenceMatcher(None, DIC[i], word).ratio()
+        if similar > max[0]:
+            max[0] = similar
+            index[0] = i
+            sort(max, index)
+
+    return index
 def get_suggestions(_word):
     """
     search for the closest word
@@ -96,11 +107,9 @@ wrongWords = []
 for word in wordlist:
     if not binary_search(word):
         wrongWords.append(word)
-suggestionWords = {
-    'i': ['i'],
-    'sofwear': ['soft', 'software'],
-    'saem': ['sea', 'sae', 'same']
 
-}
+suggestionWords = {}
+for word in wrongWords:
+    suggestionWords[word] = closest(word)
 formater(wordlist, wrongWords)
 print_suggestion(wrongWords, suggestionWords)
