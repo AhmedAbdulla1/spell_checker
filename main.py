@@ -41,15 +41,25 @@ def binary_search(item, _list=dic_to_list):
 
 
 def sort(_max, index):
-    for i in range(0, 4):
+    """
+    :param _max: list of value of SequenceMatcher
+    :param index: list of words
+    :return: none
+    """
+    for i in range(0, 2):
         if _max[i] > _max[i + 1]:
             _max[i], _max[i + 1] = _max[i + 1], _max[i]
             index[i], index[i + 1] = index[i + 1], index[i]
 
 
-def get_suggestion(_word):  # search for the get_suggestion word
-    index = [dic_to_list[0], dic_to_list[1], dic_to_list[2], dic_to_list[3], dic_to_list[4]]
-    _max = [0, 0, 0, 0, 0]
+def get_suggestion(_word):
+    """
+    to get tree words suggestion for one wrong word
+    :param _word:
+    :return: list of suggestion words
+    """
+    index = [dic_to_list[0], dic_to_list[1], dic_to_list[2]]
+    _max = [0, 0, 0]
 
     for item in dic_to_list:
         similar = difflib.SequenceMatcher(None, item, word).ratio()
@@ -65,8 +75,7 @@ class Format:
     end = '\033[0m'
     underline = '\033[4m'
 
-    @staticmethod
-    def print_wrong_word(_words, _wrongWords):
+    def print_wrong_word(self, _words, _wrongWords):
         """
         to print the wrong words and draw underline
         :param _words:
@@ -80,8 +89,7 @@ class Format:
                 print(_word, end=' ')
         print()
 
-    @staticmethod
-    def print_suggestion(_wrongWords, _suggestionWords):
+    def print_suggestion(self, _wrongWords, _suggestionWords):
         """
         this function to print the suggestion words
         :param _wrongWords: this is the list of wrong words
